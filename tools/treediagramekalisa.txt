@@ -1,4 +1,4 @@
-apklaporkasusahmadi/
+apklaporkasusekalisa/
 │
 ├── index.php                 # halaman homepage selamat datang (pakai navbar yang ada menu loginuser dan loginsiswa)
 │
@@ -57,6 +57,11 @@ apklaporkasusahmadi/
 │   │   │   ├── create.php
 │   │   │   ├── edit.php
 │   │   │   └── show.php
+│   │   ├── siswa/            # manajemen master data sanksi (fitur 11)
+│   │   │   ├── index.php
+│   │   │   ├── create.php
+│   │   │   ├── edit.php
+│   │   │   └── show.php
 │   │   ├── penanganan/        # proses tindakan atas laporan masuk (fitur 14)
 │   │   │   ├── index.php
 │   │   │   ├── create.php
@@ -101,6 +106,8 @@ apklaporkasusahmadi/
 └── proses/
    ├── koneksi.php
    ├── session.php
+   ├── prosesdashboarduser.php
+   ├── prosesdashboardsiswa.php
    ├── prosesuser.php
    ├── prosessiswa.php
    ├── proseskasus.php
