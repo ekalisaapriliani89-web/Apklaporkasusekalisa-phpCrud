@@ -1,0 +1,111 @@
+apklaporkasusahmadi/
+│
+├── index.php                 # halaman homepage selamat datang (pakai navbar yang ada menu loginuser dan loginsiswa)
+│
+├── assets/
+│   ├── js/
+│   ├── css/
+│   ├── plugins/
+│   └── images/
+│       ├── slider/
+│       ├── kasus/
+│       ├── siswa/
+│       └── user/
+│  
+├── views/
+│   │
+│   ├── component/ 
+│   │   ├── tamu/
+│   │   │   ├── navbar.php    => pakai navbar yang ada menu loginuser dan loginsiswa
+│   │   │   └── footer.php
+│   │   ├── user/
+│   │   │   ├── navbar.php    => pakai navbar yang ada foto, role, namauser, menu logoutnya
+│   │   │   ├── sidebaradmin.php    => sesuai usecase seluruh fitur (1 s/d 14) bisa diakses
+│   │   │   ├── sidebarpetugas.php  => tidak boleh ada menu user (fitur 8), bahkan tidak boleh diakses langsung via URL
+│   │   │   └── footer.php
+│   │   └── siswa/
+│   │       ├── navbar.php    => pakai navbar yang ada foto, role, namasiswa, menu logoutnya
+│   │       ├── sidebar.php   => hanya menampilkan menu dashboard siswa, jenis kasus, dan pengajuan laporan
+│   │       └── footer.php
+│   │
+│   ├── user/   ← (ADMIN & PETUGAS)
+│   │   ├── dashboard/
+│   │   │   ├── dashboardadmin.php
+│   │   │   └── dashboardpetugas.php
+│   │   ├── user/              # khusus admin saja (fitur 8)
+│   │   │   ├── index.php
+│   │   │   ├── create.php
+│   │   │   ├── edit.php
+│   │   │   └── show.php
+│   │   ├── pelapor/           # manajemen profil data pelapor/siswa (fitur 9 & 12)
+│   │   │   ├── index.php
+│   │   │   ├── create.php
+│   │   │   ├── edit.php
+│   │   │   └── show.php
+│   │   ├── kasus/             # manajemen master data kasus (fitur 10)
+│   │   │   ├── index.php
+│   │   │   ├── create.php
+│   │   │   ├── edit.php
+│   │   │   └── show.php
+│   │   ├── kategori/          # tabel terkait untuk jenis kasus (fitur 10)
+│   │   │   ├── index.php
+│   │   │   ├── create.php
+│   │   │   ├── edit.php
+│   │   │   └── show.php
+│   │   ├── sanksi/            # manajemen master data sanksi (fitur 11)
+│   │   │   ├── index.php
+│   │   │   ├── create.php
+│   │   │   ├── edit.php
+│   │   │   └── show.php
+│   │   ├── penanganan/        # proses tindakan atas laporan masuk (fitur 14)
+│   │   │   ├── index.php
+│   │   │   ├── create.php
+│   │   │   ├── edit.php
+│   │   │   └── show.php
+│   │   └── laporan/           # halaman rekap data laporan masuk (fitur 6)
+│   │       ├── laporanharian.php
+│   │       ├── cetaklaporanharian.php
+│   │       ├── laporanbulanan.php
+│   │       ├── cetaklaporanbulanan.php
+│   │       ├── laporantahunan.php
+│   │       └── cetaklaporantahunan.php
+│   │
+│   ├── siswa/   ← (LOGIN SISWA / PELAPOR)
+│   │   ├── dashboardsiswa.php   # dashboard semantic dinamis modern minimalis nyaman diakses dari gadget apa saja (fitur 5)
+│   │   ├── profil.php           # menampilkan informasi data diri siswa dari tabel siswa
+│   │   ├── pengajuan/           # fitur siswa membuat/mengajukan laporan kasus baru (fitur 13)
+│   │   │   ├── index.php        # menampilkan riwayat pengajuan laporan milik siswa tersebut
+│   │   │   └── create.php       # form tambah laporan kasus baru
+│   │   └── riwayatkasus.php     # halaman untuk memantau status perkembangan kasus yang dilaporkan siswa
+│   │
+│   ├── landing/   ← (PUBLIC)
+│   │   ├── home.php             # halaman default paling depan berisi cuplikan informasi web Lapor Kasus profesional (fitur 1)
+│   │   ├── daftarkasus.php      # halaman informasi jenis-jenis kasus yang sering terjadi/ditangani
+│   │   ├── detilkasus.php       # detail informasi ketika diklik dari halaman daftarkasus.php
+│   │   ├── daftarkategori.php   # melihat daftar kategori kasus yang tersedia di sekolah
+│   │   ├── tentang.php          # profil instansi/sekolah dan tim penanganan kasus
+│   │   ├── kontak.php           # halaman pengaduan darurat atau kontak center petugas
+│   │   └── panduan.php          # alur tatacara pelaporan kasus bagi siswa
+│   │
+│   ├── auth/   
+│   │   ├── logout.php
+│   │   ├── loginuser.php        # login admin dan petugas (fitur 2)
+│   │   ├── loginsiswa.php       # login khusus siswa (fitur 3)
+│   │   └── registersiswa.php    # pendaftaran akun siswa baru, diakses dari loginsiswa.php (fitur 4)
+│   │
+│   └── errors/   ← (GLOBAL ERROR HANDLER)
+│       ├── 404.php
+│       ├── 403.php              # akan muncul jika petugas/siswa mencoba akses halaman user via URL langsung
+│       └── 500.php
+│
+└── proses/
+   ├── koneksi.php
+   ├── session.php
+   ├── prosesuser.php
+   ├── prosessiswa.php
+   ├── proseskasus.php
+   ├── proseskategori.php
+   ├── prosessanksi.php
+   ├── prosespengajuan.php
+   ├── prosespenanganan.php
+   └── proseslaporan.php
