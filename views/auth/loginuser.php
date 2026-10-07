@@ -19,7 +19,7 @@
                         <p class="text-muted small">Silakan masuk menggunakan akun petugas/admin</p>
                     </div>
 
-                    <form action="../../proses/proses_login_user.php" method="POST">
+                   <form action="/5APKLAPORKASUSEKALISA/proses/prosesloginsiswa.php" method="POST">
                         <div class="mb-3">
                             <label for="username" class="form-label fw-semibold">Username</label>
                             <input type="text" class="form-control" id="username" name="username" placeholder="Masukkan username" required autofocus>
