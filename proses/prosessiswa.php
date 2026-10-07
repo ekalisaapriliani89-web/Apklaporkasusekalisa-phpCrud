@@ -12,10 +12,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
-        $stmt = $pdo->prepare("SELECT * FROM siswa WHERE (namasiswa = :username OR idsiswa = :username) AND nohp = :password LIMIT 1");
+        // Menggunakan nama parameter yang berbeda (:user_nama dan :user_id) agar tidak bentrok
+        $stmt = $pdo->prepare("SELECT * FROM siswa WHERE (namasiswa = :user_nama OR idsiswa = :user_id) AND nohp = :password LIMIT 1");
         $stmt->execute([
-            'username' => $username,
-            'password' => $password
+            'user_nama' => $username,
+            'user_id'   => $username,
+            'password'  => $password
         ]);
         $siswa = $stmt->fetch();
 
