@@ -27,18 +27,19 @@ if (isset($_SESSION['siswa'])) {
             <div class="alert alert-danger text-center">NISN atau Password salah!</div>
         <?php endif; ?>
 
-        <!-- Action mengarah ke folder proses yang berada 2 tingkat di luar (../../proses/) -->
-        <form action="/5APKLAPORKASUSEKALISA/proses/prosessiswa.php" method="POST">
-            <div class="mb-3">
-                <label class="form-label">NISN</label>
-                <input type="text" name="nisn" class="form-control" placeholder="Masukkan NISN" required autocomplete="off">
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Password</label>
-                <input type="password" name="password" class="form-control" placeholder="Masukkan Password" required>
-            </div>
-            <button type="submit" class="btn btn-primary w-100 fw-bold">Masuk</button>
-        </form>
+     <form action="/5APKLAPORKASUSEKALISA/proses/prosessiswa.php" method="POST">
+    <div class="mb-3">
+        <label for="username" class="form-label">NISN</label>
+        <!-- Pastikan ada name="username" -->
+        <input type="text" class="form-control" id="username" name="username" placeholder="Masukkan NISN" required>
+    </div>
+    <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <!-- Pastikan ada name="password" -->
+        <input type="password" class="form-control" id="password" name="password" placeholder="Masukkan Password" required>
+    </div>
+    <button type="submit" class="btn btn-primary w-100 fw-bold">Masuk</button>
+</form>
         
         <div class="text-center mt-3">
             <a href="loginuser.php">Login sebagai Petugas</a>
