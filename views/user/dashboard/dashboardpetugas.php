@@ -1,14 +1,25 @@
 <?php
 session_start();
 require_once '../../../proses/session.php';
-checkPetugasOnly();
 
-// Query statistik khusus petugas
+// Cek hak akses
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'petugas') {
+    header("Location: ../../auth/loginuser.php");
+    exit;
+}
+
+$iduser = $_SESSION['iduser'] ?? null;
+
+// Query statistik
 $pendingCount = $pdo->query("SELECT COUNT(*) FROM pengajuan WHERE status = 'pending'")->fetchColumn();
 $diprosesCount = $pdo->query("SELECT COUNT(*) FROM pengajuan WHERE status = 'diproses'")->fetchColumn();
-$selesaiCount = $pdo->query("SELECT COUNT(*) FROM penanganan WHERE iduser = '{$_SESSION['iduser']}'")->fetchColumn();
 
-// Query antrean pengajuan yang perlu tindakan
+// Query penanganan
+$stmtSelesai = $pdo->prepare("SELECT COUNT(*) FROM penanganan WHERE iduser = :iduser");
+$stmtSelesai->execute(['iduser' => $iduser]);
+$selesaiCount = $stmtSelesai->fetchColumn();
+
+// Query antrean pengajuan
 $stmtAntrean = $pdo->query("SELECT p.*, s.namasiswa, s.kelas, k.namakasus 
                             FROM pengajuan p
                             JOIN siswa s ON p.idsiswa = s.idsiswa

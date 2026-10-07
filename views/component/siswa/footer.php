@@ -1,7 +1,3 @@
-<footer class="footer">
-
-    <p>
-        &copy; <?= date('Y'); ?> Sistem Informasi Lapor Kasus
-    </p>
-
+<footer class="text-center text-muted py-4 mt-auto">
+    <small>&copy; <?= date('Y'); ?> Aplikasi Lapor Kasus. All rights reserved.</small>
 </footer>
