@@ -1,30 +1,8 @@
 <?php
 session_start();
-require_once '../../proses/koneksi.php';
-
-$error = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nisn = trim($_POST['nisn'] ?? '');
-    $password = trim($_POST['password'] ?? '');
-
-    if (!empty($nisn) && !empty($password)) {
-        $stmt = $pdo->prepare("SELECT * FROM siswa WHERE nisn = :nisn");
-        $stmt->execute(['nisn' => $nisn]);
-        $siswa = $stmt->fetch();
-
-        if ($siswa && password_verify($password, $siswa['password'])) {
-            $_SESSION['idsiswa'] = $siswa['idsiswa'];
-            $_SESSION['namasiswa'] = $siswa['namasiswa'];
-            $_SESSION['role'] = 'siswa';
-            header("Location: ../siswa/dashboardsiswa.php");
-            exit;
-        } else {
-            $error = "NISN atau Password salah!";
-        }
-    } else {
-        $error = "Semua kolom wajib diisi!";
-    }
+if (isset($_SESSION['siswa'])) {
+    header("Location: ../siswa/index.php");
+    exit;
 }
 ?>
 <!DOCTYPE html>
@@ -35,31 +13,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Login Siswa</title>
     <link rel="stylesheet" href="../../assets/css/bootstrap.min.css">
 </head>
-<body class="bg-light d-flex align-items-center min-vh-100">
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body p-4">
-                    <h4 class="fw-bold text-center mb-3">Login Siswa</h4>
-                    <?php if ($error): ?>
-                        <div class="alert alert-danger py-2"><?= htmlspecialchars($error); ?></div>
-                    <?php endif; ?>
-                    <form action="" method="POST">
-                        <div class="mb-3">
-                            <label class="form-label">NISN</label>
-                            <input type="text" name="nisn" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Password</label>
-                            <input type="password" name="password" class="form-control" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Masuk</button>
-                    </form>
-                </div>
+<body class="bg-light d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+
+<div class="card border-0 shadow-sm col-md-4 p-4">
+    <div class="card-body">
+        <h3 class="text-center fw-bold mb-3">Login Siswa</h3>
+        <p class="text-center text-muted mb-4">Silakan masuk menggunakan NISN Anda</p>
+
+        <?php if (isset($_GET['pesan']) && $_GET['pesan'] == 'gagal'): ?>
+            <div class="alert alert-danger text-center">NISN atau Password salah!</div>
+        <?php endif; ?>
+
+        <form action="../../proses/prosesloginsiswa.php" method="POST">
+            <div class="mb-3">
+                <label class="form-label">NISN</label>
+                <input type="text" name="nisn" class="form-control" placeholder="Masukkan NISN" required autocomplete="off">
             </div>
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input type="password" name="password" class="form-control" placeholder="Masukkan Password" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 fw-bold">Masuk</button>
+        </form>
+        
+        <div class="text-center mt-3">
+            <a href="login.php" class="text-decoration-none small">Login sebagai Admin/Petugas</a>
         </div>
     </div>
 </div>
+
 </body>
 </html>
