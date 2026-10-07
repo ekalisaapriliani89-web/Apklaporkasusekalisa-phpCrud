@@ -2,34 +2,46 @@
 session_start();
 require_once 'koneksi.php';
 
+// Cek apakah data dikirim via method POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
-    $password = trim($_POST['password'] ?? '');
+    $password = $_POST['password'] ?? '';
 
+    // Validasi input tidak boleh kosong
     if (empty($username) || empty($password)) {
-        header("Location: /5APKLAPORKASUSEKALISA/views/auth/loginsiswa.php?pesan=kosong");
+        header("Location: ../views/auth/loginsiswa.php?pesan=kosong");
         exit;
     }
 
     try {
-        // Cari siswa berdasarkan kolom username
-        $stmt = $pdo->prepare("SELECT * FROM siswa WHERE username = :username LIMIT 1");
+        // Cari data siswa berdasarkan NISN atau Username
+        $stmt = $pdo->prepare("SELECT * FROM siswa WHERE nisn = :username OR username = :username LIMIT 1");
         $stmt->execute(['username' => $username]);
         $siswa = $stmt->fetch();
 
-        // Cek kecocokan password (mendukung teks biasa & password_hash)
+        // Cek apakah siswa ditemukan dan password cocok
         if ($siswa && ($password === $siswa['password'] || password_verify($password, $siswa['password']))) {
-            $_SESSION['siswa'] = $siswa;
-            header("Location: /5APKLAPORKASUSEKALISA/index.php");
+            // Simpan session siswa
+            $_SESSION['siswa'] = [
+                'idsiswa'  => $siswa['idsiswa'] ?? $siswa['id_siswa'],
+                'nisn'     => $siswa['nisn'],
+                'nama'     => $siswa['nama'] ?? $siswa['nama_siswa'],
+                'role'     => 'siswa'
+            ];
+
+            // Berhasil login -> Arahkan ke dashboard siswa
+            header("Location: ../views/dashboard/siswa.php"); // Sesuaikan jika nama file dashboard kamu berbeda
             exit;
         } else {
-            header("Location: /5APKLAPORKASUSEKALISA/views/auth/loginsiswa.php?pesan=gagal");
+            // Login gagal -> Password atau Username salah
+            header("Location: ../views/auth/loginsiswa.php?pesan=gagal");
             exit;
         }
     } catch (PDOException $e) {
         die("Error pada database: " . $e->getMessage());
     }
 } else {
-    header("Location: /5APKLAPORKASUSEKALISA/views/auth/loginsiswa.php");
+    // Jika mencoba akses langsung tanpa submit form
+    header("Location: ../views/auth/loginsiswa.php");
     exit;
 }
