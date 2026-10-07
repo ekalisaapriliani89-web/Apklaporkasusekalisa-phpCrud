@@ -1,3 +1,14 @@
-<footer class="text-center text-muted py-4 mt-auto">
-    <small>&copy; <?= date('Y'); ?> Aplikasi Lapor Kasus. All rights reserved.</small>
+<footer class="main-footer">
+
+    <strong>
+        Copyright &copy; <?= date('Y'); ?>
+        <a href="index.php?halaman=home">Lapor Kasus ekalisa</a>.
+    </strong>
+
+    All rights reserved.
+
+    <div class="float-right d-none d-sm-inline-block">
+        <b>Version</b> 1.0.0
+    </div>
+
 </footer>

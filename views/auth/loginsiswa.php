@@ -1,67 +1,66 @@
-<?php
-session_start();
-
-// Jika siswa sudah login, langsung alihkan ke halaman utama
-if (isset($_SESSION['siswa'])) {
-    header("Location: /5APKLAPORKASUSEKALISA/index.php");
-    exit;
-}
-?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Siswa - Lapor Kasus</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light d-flex align-items-center justify-content-center" style="min-height: 100vh;">
-
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-5 col-lg-4">
-            <div class="card border-0 shadow-sm p-3">
-                <div class="card-body">
-                    <h3 class="text-center fw-bold mb-1">Login Siswa</h3>
-                    <p class="text-center text-muted small mb-4">Silakan masuk dengan Username Anda</p>
-
-                    <!-- Notifikasi Pesan Error / Alert -->
-                    <?php if (isset($_GET['pesan'])): ?>
-                        <?php if ($_GET['pesan'] == 'gagal'): ?>
-                            <div class="alert alert-danger text-center py-2 small mb-3">
-                                Username atau Password salah!
-                            </div>
-                        <?php elseif ($_GET['pesan'] == 'kosong'): ?>
-                            <div class="alert alert-warning text-center py-2 small mb-3">
-                                Username dan Password wajib diisi!
-                            </div>
-                        <?php endif; ?>
-                    <?php endif; ?>
-
-                    <!-- Form Login menuju proses/prosessiswa.php -->
-                    <form action="/5APKLAPORKASUSEKALISA/proses/prosessiswa.php" method="POST">
-                        <div class="mb-3">
-                            <label for="username" class="form-label small fw-semibold">Username</label>
-                            <input type="text" class="form-control" id="username" name="username" placeholder="Masukkan Username" required autofocus>
+<div class="d-flex justify-content-center py-4">
+    <div class="card shadow-sm" style="width:100%;max-width:420px;border:1px solid #7e7e7e;border-radius:10px;">
+        <div class="card-body p-4">
+            <div class="text-center mb-3">
+                <div class="mb-2">
+                    <span class="d-inline-flex align-items-center justify-content-center bg-primary text-white rounded-circle" style="width:60px;height:60px;">
+                        <i class="fas fa-user-graduate fa-2x"></i>
+                    </span>
+                </div>
+                <h4 class="font-weight-bold mb-1">Login Siswa</h4>
+                <p class="text-muted mb-0 small">Masuk ke Sistem Pengaduan & Lapor Kasus Sekalisa</p>
+            </div>
+            <form action="proses/prosessiswa.php?aksi=login" method="POST">
+                <div class="form-group mb-3">
+                    <label class="mb-1">
+                        <i class="fas fa-id-card mr-1 text-primary"></i> NIS / Username
+                    </label>
+                    <input type="text" name="username" class="form-control" placeholder="Masukkan NIS atau username" autocomplete="username" required autofocus>
+                </div>
+                <div class="form-group mb-3">
+                    <label class="mb-1">
+                        <i class="fas fa-lock mr-1 text-primary"></i> Password
+                    </label>
+                    <div class="input-group">
+                        <input type="password" name="password" id="passwordSiswa" class="form-control" placeholder="Masukkan password" autocomplete="current-password" required>
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-outline-secondary" id="togglePasswordSiswa" title="Tampilkan password">
+                                <i class="fas fa-eye"></i>
+                            </button>
                         </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label small fw-semibold">Password</label>
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Masukkan Password" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100 fw-bold mt-2">Masuk</button>
-                    </form>
-
-                    <div class="text-center mt-3 pt-2 border-top">
-                        <a href="loginuser.php" class="text-decoration-none small">Login sebagai Petugas / Admin</a>
                     </div>
                 </div>
+                <button type="submit" name="login" class="btn btn-primary btn-block">
+                    <i class="fas fa-sign-in-alt mr-1"></i> Login Siswa
+                </button>
+            </form>
+            <div class="text-center mt-3">
+                <p class="text-muted small mb-1">Belum memiliki akun?</p>
+                <a href="index.php?halaman=registersiswa" class="text-primary small font-weight-bold">
+                    <i class="fas fa-user-plus mr-1"></i> Registrasi Akun Siswa
+                </a>
+            </div>
+            <div class="text-center mt-2">
+                <a href="index.php?halaman=home" class="text-muted small">
+                    <i class="fas fa-arrow-left mr-1"></i> Kembali ke Home
+                </a>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<script>
+document.getElementById('togglePasswordSiswa').addEventListener('click', function() {
+    const password = document.getElementById('passwordSiswa');
+    const icon = this.querySelector('i');
+    if (password.type === 'password') {
+        password.type = 'text';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+        this.title = 'Sembunyikan password';
+    } else {
+        password.type = 'password';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+        this.title = 'Tampilkan password';
+    }
+});
+</script>

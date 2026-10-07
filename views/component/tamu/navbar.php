@@ -1,24 +1,115 @@
-<!-- views/component/tamu/navbar.php -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
-  <div class="container">
-    <a class="navbar-brand fw-bold" href="/5APKLAPORKASUSEKALISA/index.php">LAPOR KASUS</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navTamu">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    
-    <div class="collapse navbar-collapse" id="navTamu">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item"><a class="nav-link" href="/5APKLAPORKASUSEKALISA/index.php">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="/5APKLAPORKASUSEKALISA/views/landing/daftarkasus.php">Daftar Kasus</a></li>
-        <li class="nav-item"><a class="nav-link" href="/5APKLAPORKASUSEKALISA/views/landing/daftarkategori.php">Kategori</a></li>
-        <li class="nav-item"><a class="nav-link" href="/5APKLAPORKASUSEKALISA/views/landing/panduan.php">Panduan</a></li>
-        <li class="nav-item"><a class="nav-link" href="/5APKLAPORKASUSEKALISA/views/landing/tentang.php">Tentang</a></li>
-        <li class="nav-item"><a class="nav-link" href="/5APKLAPORKASUSEKALISA/views/landing/kontak.php">Kontak</a></li>
-      </ul>
-      <div class="d-flex gap-2">
-        <a href="/5APKLAPORKASUSEKALISA/views/auth/loginsiswa.php" class="btn btn-light text-primary fw-semibold">Login Siswa</a>
-        <a href="/5APKLAPORKASUSEKALISA/views/auth/loginuser.php" class="btn fw-bold" style="background-color: #ffc107; color: #000000 !important; border: none;">Login Petugas/Admin</a>
-      </div>
+<nav class="main-header navbar navbar-expand-lg navbar-white navbar-light shadow-sm">
+
+    <div class="container">
+
+        <a href="index.php?halaman=home" class="navbar-brand">
+            <img
+                src="assets/images/logo.png"
+                alt="Logo"
+                class="brand-image img-circle elevation-2"
+                height="40px"
+                width="35px">
+            <span class="brand-text font-weight-bold">
+                <span class="text-primary">LAPOR</span>
+                <span class="text-danger">KASUS</span>
+            </span>
+        </a>
+
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbarCollapse"
+            aria-controls="navbarCollapse"
+            aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+
+            <ul class="navbar-nav">
+
+                <li class="nav-item">
+                    <a
+                        href="index.php?halaman=home"
+                        class="nav-link btn btn-primary text-white px-3">
+                        <i class="fas fa-home mr-1"></i>
+                        Home
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a
+                        href="index.php?halaman=daftarkasus"
+                        class="nav-link">
+                        <i class="fas fa-exclamation-triangle mr-1"></i>
+                        Daftar Kasus
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a
+                        href="index.php?halaman=daftarkategori"
+                        class="nav-link">
+                        <i class="fas fa-tags mr-1"></i>
+                        Kategori Kasus
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a
+                        href="index.php?halaman=tentang"
+                        class="nav-link">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        Tentang
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a
+                        href="index.php?halaman=kontak"
+                        class="nav-link">
+                        <i class="fas fa-envelope mr-1"></i>
+                        Kontak
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a
+                        href="index.php?halaman=daftarisi"
+                        class="nav-link">
+                        <i class="fas fa-list mr-1"></i>
+                        Daftar Isi
+                    </a>
+                </li>
+
+            </ul>
+
+            <ul class="navbar-nav ml-auto align-items-lg-center">
+
+                <li class="nav-item">
+                    <a
+                        href="index.php?halaman=loginsiswa"
+                        class="btn btn-success">
+                        <i class="fas fa-user-graduate mr-1"></i>
+                        Login Siswa
+                    </a>
+                </li>
+
+                <li class="nav-item ml-lg-2">
+                    <a
+                        href="index.php?halaman=loginuser"
+                        class="btn btn-danger">
+                        <i class="fas fa-user-shield mr-1"></i>
+                        Login Petugas / Admin
+                    </a>
+                </li>
+
+            </ul>
+
+        </div>
+
     </div>
-  </div>
+
 </nav>

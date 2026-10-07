@@ -1,17 +1,139 @@
-<!-- views/component/user/sidebarpetugas.php -->
-<aside class="bg-dark text-white p-3 shadow" style="width: 260px; min-height: 100vh;">
-    <div class="text-center mb-4">
-        <h5 class="fw-bold text-success"><i class="fas fa-user-tie me-2"></i>Petugas BK</h5>
-        <hr class="border-secondary">
+<!-- Main Sidebar -->
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+
+    <!-- Brand Logo -->
+    <a href="index.php?halaman=<?= ($_SESSION['role'] ?? '') === 'admin' ? 'dashboardadmin' : 'dashboardpetugas'; ?>" class="brand-link">
+        <span class="brand-text font-weight-light pl-2">
+            <strong>Lapor Kasus</strong> Sekalisa
+        </span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+
+        <!-- User Panel -->
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex align-items-center">
+            <div class="image">
+                <img src="assets/images/user/<?= $_SESSION['foto'] ?? 'default.png'; ?>" class="img-circle elevation-2" alt="User Image">
+            </div>
+            <div class="info">
+                <a href="#" class="d-block font-weight-bold">
+                    <?= $_SESSION['namauser'] ?? $_SESSION['username'] ?? 'Pengguna'; ?>
+                </a>
+                <small class="badge badge-info text-capitalize">
+                    <?= $_SESSION['role'] ?? 'Petugas'; ?>
+                </small>
+            </div>
+        </div>
+
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+
+                <!-- DASHBOARD -->
+                <li class="nav-item">
+                    <?php $dashPage = (($_SESSION['role'] ?? '') === 'admin') ? 'dashboardadmin' : 'dashboardpetugas'; ?>
+                    <a href="index.php?halaman=<?= $dashPage; ?>" class="nav-link <?= menuAktif($dashPage); ?>">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>Dashboard</p>
+                    </a>
+                </li>
+
+                <li class="nav-header">MASTER DATA</li>
+
+                <!-- MANAJEMEN USER (KHUSUS ADMIN) -->
+                <?php if (($_SESSION['role'] ?? '') === 'admin'): ?>
+                <li class="nav-item">
+                    <a href="index.php?halaman=user" class="nav-link <?= menuAktif('user'); ?>">
+                        <i class="nav-icon fas fa-user-shield"></i>
+                        <p>Data User / Petugas</p>
+                    </a>
+                </li>
+                <?php endif; ?>
+
+                <!-- DATA SISWA -->
+                <li class="nav-item">
+                    <a href="index.php?halaman=siswa" class="nav-link <?= menuAktif('siswa'); ?>">
+                        <i class="nav-icon fas fa-user-graduate"></i>
+                        <p>Data Siswa</p>
+                    </a>
+                </li>
+
+                <!-- DATA PELAPOR -->
+                <li class="nav-item">
+                    <a href="index.php?halaman=pelapor" class="nav-link <?= menuAktif('pelapor'); ?>">
+                        <i class="nav-icon fas fa-users"></i>
+                        <p>Data Pelapor</p>
+                    </a>
+                </li>
+
+                <!-- KATEGORI KASUS -->
+                <li class="nav-item">
+                    <a href="index.php?halaman=kategori" class="nav-link <?= menuAktif('kategori'); ?>">
+                        <i class="nav-icon fas fa-tags"></i>
+                        <p>Kategori Kasus</p>
+                    </a>
+                </li>
+
+                <!-- MASTER KASUS -->
+                <li class="nav-item">
+                    <a href="index.php?halaman=kasus" class="nav-link <?= menuAktif('kasus'); ?>">
+                        <i class="nav-icon fas fa-folder-open"></i>
+                        <p>Master Kasus</p>
+                    </a>
+                </li>
+
+                <!-- MASTER SANKSI -->
+                <li class="nav-item">
+                    <a href="index.php?halaman=sanksi" class="nav-link <?= menuAktif('sanksi'); ?>">
+                        <i class="nav-icon fas fa-gavel"></i>
+                        <p>Master Sanksi</p>
+                    </a>
+                </li>
+
+                <li class="nav-header">PENANGANAN LAPORAN</li>
+
+                <!-- PENANGANAN KASUS -->
+                <li class="nav-item">
+                    <a href="index.php?halaman=penanganan" class="nav-link <?= menuAktif('penanganan'); ?>">
+                        <i class="nav-icon fas fa-clipboard-list"></i>
+                        <p>Penanganan Kasus</p>
+                    </a>
+                </li>
+
+                <li class="nav-header">LAPORAN REKAP</li>
+
+                <li class="nav-item">
+                    <a href="index.php?halaman=laporanharian" class="nav-link <?= menuAktif('laporanharian'); ?>">
+                        <i class="nav-icon fas fa-file-alt"></i>
+                        <p>Laporan Harian</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="index.php?halaman=laporanbulanan" class="nav-link <?= menuAktif('laporanbulanan'); ?>">
+                        <i class="nav-icon fas fa-file-alt"></i>
+                        <p>Laporan Bulanan</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="index.php?halaman=laporantahunan" class="nav-link <?= menuAktif('laporantahunan'); ?>">
+                        <i class="nav-icon fas fa-file-alt"></i>
+                        <p>Laporan Tahunan</p>
+                    </a>
+                </li>
+
+                <li class="nav-header">AUTENTIKASI</li>
+
+                <li class="nav-item">
+                    <a href="index.php?halaman=logout" class="nav-link text-danger">
+                        <i class="nav-icon fas fa-sign-out-alt"></i>
+                        <p>Logout</p>
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
     </div>
-    <ul class="nav flex-column gap-2">
-        <li class="nav-item"><a href="../dashboard/dashboardpetugas.php" class="nav-link text-white"><i class="fas fa-chart-line me-2"></i> Dashboard</a></li>
-        <li class="nav-item text-muted small px-3 text-uppercase fw-bold mt-2">Pelayanan</li>
-        <li class="nav-item"><a href="../pelapor/index.php" class="nav-link text-white"><i class="fas fa-id-card me-2"></i> Monitor Pelapor</a></li>
-        <li class="nav-item"><a href="../kasus/index.php" class="nav-link text-white"><i class="fas fa-paste me-2"></i> Daftar Kasus</a></li>
-        <li class="nav-item"><a href="../penanganan/index.php" class="nav-link text-white"><i class="fas fa-gavel me-2"></i> Proses Tindakan</a></li>
-        <li class="nav-item text-muted small px-3 text-uppercase fw-bold mt-2">Pelaporan</li>
-        <li class="nav-item"><a href="../laporan/laporanharian.php" class="nav-link text-white"><i class="fas fa-file-invoice me-2"></i> Cetak Rekap</a></li>
-        <li class="nav-item mt-5"><a href="../../auth/logout.php" class="nav-link text-danger fw-bold"><i class="fas fa-sign-out-alt me-2"></i> Keluar Aplikasi</a></li>
-    </ul>
 </aside>
