@@ -12,16 +12,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
-        // Menggunakan nama parameter yang berbeda (:user_nama dan :user_id) agar tidak bentrok
-        $stmt = $pdo->prepare("SELECT * FROM siswa WHERE (namasiswa = :user_nama OR idsiswa = :user_id) AND nohp = :password LIMIT 1");
-        $stmt->execute([
-            'user_nama' => $username,
-            'user_id'   => $username,
-            'password'  => $password
-        ]);
+        // Cari siswa berdasarkan kolom username
+        $stmt = $pdo->prepare("SELECT * FROM siswa WHERE username = :username LIMIT 1");
+        $stmt->execute(['username' => $username]);
         $siswa = $stmt->fetch();
 
-        if ($siswa) {
+        // Cek kecocokan password (mendukung teks biasa & password_hash)
+        if ($siswa && ($password === $siswa['password'] || password_verify($password, $siswa['password']))) {
             $_SESSION['siswa'] = $siswa;
             header("Location: /5APKLAPORKASUSEKALISA/index.php");
             exit;

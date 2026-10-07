@@ -21,17 +21,17 @@ if (isset($_SESSION['siswa'])) {
 <div class="card border-0 shadow-sm col-md-4 p-4">
     <div class="card-body">
         <h3 class="text-center fw-bold mb-3">Login Siswa</h3>
-        <p class="text-center text-muted mb-4">Silakan masuk menggunakan NISN Anda</p>
+        <p class="text-center text-muted mb-4">Silakan masuk menggunakan username Anda</p>
 
         <?php if (isset($_GET['pesan']) && $_GET['pesan'] == 'gagal'): ?>
-            <div class="alert alert-danger text-center">NISN atau Password salah!</div>
+            <div class="alert alert-danger text-center">username atau Password salah!</div>
         <?php endif; ?>
 
      <form action="/5APKLAPORKASUSEKALISA/proses/prosessiswa.php" method="POST">
     <div class="mb-3">
-        <label for="username" class="form-label">NISN</label>
+        <label for="username" class="form-label">Username</label>
         <!-- Pastikan ada name="username" -->
-        <input type="text" class="form-control" id="username" name="username" placeholder="Masukkan NISN" required>
+        <input type="text" class="form-control" id="username" name="username" placeholder="Masukkan username" required>
     </div>
     <div class="mb-3">
         <label for="password" class="form-label">Password</label>
