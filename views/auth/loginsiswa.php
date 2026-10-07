@@ -28,7 +28,7 @@ if (isset($_SESSION['siswa'])) {
         <?php endif; ?>
 
         <!-- Action mengarah ke folder proses yang berada 2 tingkat di luar (../../proses/) -->
-        <form action="/5APKLAPORKASUSEKALISA/proses/prosesloginsiswa.php" method="POST">
+        <form action="/5APKLAPORKASUSEKALISA/proses/prosessiswa.php" method="POST">
             <div class="mb-3">
                 <label class="form-label">NISN</label>
                 <input type="text" name="nisn" class="form-control" placeholder="Masukkan NISN" required autocomplete="off">
