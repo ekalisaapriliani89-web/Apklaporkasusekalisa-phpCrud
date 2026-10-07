@@ -30,7 +30,7 @@ if (isset($_SESSION['user'])) {
             </ul>
             <div class="d-flex gap-2">
                 <a href="views/auth/loginsiswa.php" class="btn btn-light text-primary fw-semibold">Login Siswa</a>
-                <a href="views/auth/loginuser.php">Login Petugas</a>
+                <a href="views/auth/loginuser.php" class="btn btn-light text-primary fw-semibold">Login Petugas</a>
             </div>
         </div>
     </div>
