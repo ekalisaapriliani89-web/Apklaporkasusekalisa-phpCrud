@@ -14,8 +14,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
-        // Cari data siswa berdasarkan NISN atau Username
-        $stmt = $pdo->prepare("SELECT * FROM siswa WHERE nisn = :username OR username = :username LIMIT 1");
+        // Cari data siswa berdasarkan passwordatau Username
+        $stmt = $pdo->prepare("SELECT * FROM siswa WHERE username = :username OR username = :username LIMIT 1");
         $stmt->execute(['username' => $username]);
         $siswa = $stmt->fetch();
 
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Simpan session siswa
             $_SESSION['siswa'] = [
                 'idsiswa'  => $siswa['idsiswa'] ?? $siswa['id_siswa'],
-                'nisn'     => $siswa['nisn'],
+                'unsername'     => $siswa['username'],
                 'nama'     => $siswa['nama'] ?? $siswa['nama_siswa'],
                 'role'     => 'siswa'
             ];
