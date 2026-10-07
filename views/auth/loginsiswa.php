@@ -41,7 +41,7 @@ if (isset($_SESSION['siswa'])) {
         </form>
         
         <div class="text-center mt-3">
-            <a href="login.php" class="text-decoration-none small">Login sebagai Admin/Petugas</a>
+            <a href="loginuser.php">Login sebagai Petugas</a>
         </div>
     </div>
 </div>

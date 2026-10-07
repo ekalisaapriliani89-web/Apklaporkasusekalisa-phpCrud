@@ -17,7 +17,7 @@
       </ul>
       <div class="d-flex gap-2">
         <a href="/apklaporkasusekalisa/views/auth/loginsiswa.php" class="btn btn-light text-primary fw-semibold">Login Siswa</a>
-        <a href="/apklaporkasusekalisa/views/auth/loginuser.php" class="btn btn-outline-light fw-semibold">Login Petugas/Admin</a>
+        <a href="/apklaporkasusekalisa/views/auth/loginuser.php" class="btn btn-warning text-dark fw-bold">Login Petugas/Admin</a>
       </div>
     </div>
   </div>
