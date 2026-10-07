@@ -23,10 +23,10 @@ if (isset($_SESSION['user'])) {
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="index.php" class="btn btn-light text-primary fw-semibold">LAPOR KASUS</a>
+        <a class="navbar-brand fw-bold" href="index.php">LAPOR KASUS</a>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-brand navbar-nav me-auto">
-                <li class="nav-item"><a class="nav-link active" href="index.php" class="btn btn-light text-primary fw-semibold">HOME</a></li>
+                <li class="nav-item"><a class="nav-link active" href="index.php">Home</a></li>
             </ul>
             <div class="d-flex gap-2">
                 <a href="views/auth/loginsiswa.php" class="btn btn-light text-primary fw-semibold">Login Siswa</a>
