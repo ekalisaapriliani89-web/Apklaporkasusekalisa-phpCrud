@@ -80,7 +80,7 @@ if (isset($_SESSION['user'])) {
 
 <footer class="bg-dark text-white text-center py-4 mt-5">
     <div class="container">
-        <p class="mb-1">&copy; <?= date('Y'); ?> Sistem Lapor Kasus Elisa. All rights reserved.</p>
+       
         <small class="text-muted">Layanan Pengaduan & Layanan Bimbingan Siswa Sekolah</small>
     </div>
 </footer>
