@@ -1,5 +1,7 @@
 <?php
 session_start();
+
+// Jika sudah login, langsung lempar ke halaman siswa
 if (isset($_SESSION['siswa'])) {
     header("Location: ../siswa/index.php");
     exit;
@@ -11,7 +13,8 @@ if (isset($_SESSION['siswa'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Siswa</title>
-    <link rel="stylesheet" href="../../assets/css/bootstrap.min.css">
+    <!-- Bootstrap CDN agar tampilan tidak polos -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light d-flex align-items-center justify-content-center" style="min-height: 100vh;">
 
@@ -24,6 +27,7 @@ if (isset($_SESSION['siswa'])) {
             <div class="alert alert-danger text-center">NISN atau Password salah!</div>
         <?php endif; ?>
 
+        <!-- Action mengarah ke folder proses yang berada 2 tingkat di luar (../../proses/) -->
         <form action="../../proses/prosesloginsiswa.php" method="POST">
             <div class="mb-3">
                 <label class="form-label">NISN</label>
