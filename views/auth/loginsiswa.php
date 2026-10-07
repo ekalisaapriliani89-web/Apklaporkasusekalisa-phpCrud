@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// Jika siswa sudah login, langsung alihkan ke halaman utama
+// Jika siswa sudah login, lempar ke index utama
 if (isset($_SESSION['siswa'])) {
     header("Location: /5APKLAPORKASUSEKALISA/index.php");
     exit;
