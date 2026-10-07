@@ -3,8 +3,8 @@ session_start();
 require_once 'koneksi.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = trim($_POST['username'] ?? '');
-    $password = $_POST['password'] ?? '';
+    $username = trim($_POST['username'] ?? ''); // Diisi nama siswa / ID
+    $password = trim($_POST['password'] ?? ''); // Diisi no HP
 
     if (empty($username) || empty($password)) {
         header("Location: ../views/auth/loginsiswa.php?pesan=kosong");
@@ -12,16 +12,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
-        // Cari siswa berdasarkan kolom username
-        $stmt = $pdo->prepare("SELECT * FROM siswa WHERE username = :username LIMIT 1");
-        $stmt->execute(['username' => $username]);
+        // Cari siswa berdasarkan nama siswa atau idsiswa, dan cocokkan nohp
+        $stmt = $pdo->prepare("SELECT * FROM siswa WHERE (namasiswa = :username OR idsiswa = :username) AND nohp = :password LIMIT 1");
+        $stmt->execute([
+            'username' => $username,
+            'password' => $password
+        ]);
         $siswa = $stmt->fetch();
 
-        if ($siswa && ($password === $siswa['password'] || password_verify($password, $siswa['password']))) {
+        if ($siswa) {
             $_SESSION['siswa'] = $siswa;
             
-            // Berhasil login -> pindah ke halaman kasus/dashboard
-            header("Location: ../views/kasus/index.php");
+            // Berhasil login -> pindah ke dashboard/landing
+            header("Location: /5APKLAPORKASUSEKALISA/index.php");
             exit;
         } else {
             header("Location: ../views/auth/loginsiswa.php?pesan=gagal");
