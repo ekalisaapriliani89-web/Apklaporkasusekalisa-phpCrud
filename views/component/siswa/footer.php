@@ -1,14 +1,13 @@
-<footer class="main-footer">
+<!-- =====================================================
+     FOOTER APLIKASI LAPOR KASUS SEKALISA
+===================================================== -->
+<footer class="main-footer mt-5">
 
-    <strong>
-        Copyright &copy; <?= date('Y'); ?>
-        <a href="index.php?halaman=home">Lapor Kasus ekalisa</a>.
-    </strong>
+   
+  
 
-    All rights reserved.
-
-    <div class="float-right d-none d-sm-inline-block">
-        <b>Version</b> 1.0.0
-    </div>
-
+   
 </footer>
+<!-- =====================================================
+     END FOOTER
+===================================================== -->

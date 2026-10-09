@@ -1,47 +1,67 @@
 <?php
-session_start();
-require_once '../../../proses/session.php';
-checkAdminOnly();
-?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <title>Tambah User</title>
-    <link rel="stylesheet" href="../../../assets/css/bootstrap.min.css">
-</head>
-<body class="bg-light">
-<?php include '../../component/user/navbar.php'; ?>
+/*
+|--------------------------------------------------------------------------
+| FORM TAMBAH USER SISTEM - APLIKASI LAPOR KASUS SEKALISA
+|--------------------------------------------------------------------------
+*/
 
-<div class="container my-4 col-md-6">
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-primary text-white fw-bold">Tambah User Baru</div>
-        <div class="card-body">
-            <form action="../../../proses/prosesuser.php?aksi=tambah" method="POST">
-                <div class="mb-3">
-                    <label class="form-label">Username</label>
-                    <input type="text" name="username" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Nama Lengkap</label>
-                    <input type="text" name="nama" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Password</label>
-                    <input type="password" name="password" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Role / Level</label>
-                    <select name="level" class="form-select" required>
-                        <option value="admin">Admin</option>
-                        <option value="petugas">Petugas / Guru BK</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-success w-100">Simpan User</button>
-                <a href="index.php" class="btn btn-secondary w-100 mt-2">Batal</a>
-            </form>
+/** @var mysqli $koneksi */
+?>
+
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0 font-weight-bold"><i class="fas fa-user-plus text-secondary mr-2"></i>Tambah User Sistem</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="index.php?halaman=dashboardadmin">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="index.php?halaman=user">User Sistem</a></li>
+                    <li class="breadcrumb-item active">Tambah User</li>
+                </ol>
+            </div>
         </div>
     </div>
 </div>
-</body>
-</html>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h3 class="card-title font-weight-bold text-dark m-0"><i class="fas fa-edit mr-1"></i> Form Registrasi Petugas / Admin</h3>
+            </div>
+            <form action="proses/user/simpan.php" method="POST" enctype="multipart/form-data">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label class="font-weight-bold">Nama Lengkap <span class="text-danger">*</span></label>
+                        <input type="text" name="namauser" class="form-control" placeholder="Nama petugas / admin" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold">Username <span class="text-danger">*</span></label>
+                        <input type="text" name="username" class="form-control" placeholder="Username login" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold">Password <span class="text-danger">*</span></label>
+                        <input type="password" name="password" class="form-control" placeholder="Password login" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold">Role Hak Akses <span class="text-danger">*</span></label>
+                        <select name="role" class="form-control" required>
+                            <option value="petugas" selected>Petugas BK</option>
+                            <option value="admin">Administrator</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold">Foto Profil</label>
+                        <input type="file" name="foto" class="form-control-file" accept="image/*">
+                    </div>
+                </div>
+                <div class="card-footer bg-light text-right">
+                    <a href="index.php?halaman=user" class="btn btn-secondary mr-2"><i class="fas fa-arrow-left mr-1"></i> Batal</a>
+                    <button type="submit" name="submit" class="btn btn-secondary"><i class="fas fa-save mr-1"></i> Simpan User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>

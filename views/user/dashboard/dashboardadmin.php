@@ -1,109 +1,147 @@
 <?php
-session_start();
-require_once '../../../proses/session.php';
-checkAdminOnly();
+/*
+|--------------------------------------------------------------------------
+| DASHBOARD ADMIN - APLIKASI LAPOR KASUS SEKALISA
+|--------------------------------------------------------------------------
+| Zona    : User / Admin
+| Layout  : AdminLTE
+| Project : Aplikasi Lapor Kasus Sekalisa
+|--------------------------------------------------------------------------
+*/
 
-// Query ringkasan statistik
-$totalSiswa = $pdo->query("SELECT COUNT(*) FROM siswa")->fetchColumn();
-$totalKasus = $pdo->query("SELECT COUNT(*) FROM kasus")->fetchColumn();
-$totalPengajuan = $pdo->query("SELECT COUNT(*) FROM pengajuan")->fetchColumn();
-$totalPenanganan = $pdo->query("SELECT COUNT(*) FROM penanganan")->fetchColumn();
+/** @var mysqli $koneksi */
 
-// Query pengajuan terbaru
-$stmtTerbaru = $pdo->query("SELECT p.*, s.namasiswa, s.kelas, k.namakasus 
-                             FROM pengajuan p
-                             JOIN siswa s ON p.idsiswa = s.idsiswa
-                             JOIN kasus k ON p.idkasus = k.idkasus
-                             ORDER BY p.idpengajuan DESC LIMIT 5");
-$pengajuanTerbaru = $stmtTerbaru->fetchAll();
+// Helper Angka
+if (!function_exists('angka')) {
+    function angka($val) {
+        return number_format((float)$val, 0, ',', '.');
+    }
+}
+
+/*
+|--------------------------------------------------------------------------
+| STATISTIK DATA MASTER
+|--------------------------------------------------------------------------
+*/
+$totalUser      = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM user"))['total'] ?? 0;
+$totalSiswa     = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM siswa"))['total'] ?? 0;
+$totalKasus     = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM kasus"))['total'] ?? 0;
+$totalKategori  = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM kategori"))['total'] ?? 0;
+$totalSanksi    = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM sanksi"))['total'] ?? 0;
+
+/*
+|--------------------------------------------------------------------------
+| REKAP LAPORAN / PENGAJUAN
+|--------------------------------------------------------------------------
+*/
+$totalPengajuan = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM pengajuan"))['total'] ?? 0;
+
+// Laporan Hari Ini
+$queryHariIni   = mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM pengajuan WHERE DATE(tanggallapor) = CURDATE()");
+$laporanHariIni = mysqli_fetch_assoc($queryHariIni)['total'] ?? 0;
+
+// Laporan Bulan Ini
+$queryBulanIni   = mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM pengajuan WHERE MONTH(tanggallapor) = MONTH(CURDATE()) AND YEAR(tanggallapor) = YEAR(CURDATE())");
+$laporanBulanIni = mysqli_fetch_assoc($queryBulanIni)['total'] ?? 0;
+
+/*
+|--------------------------------------------------------------------------
+| STATUS PENANGANI LAPORAN
+|--------------------------------------------------------------------------
+*/
+$totalPending   = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM pengajuan WHERE LOWER(status) = 'pending' OR LOWER(status) = 'menunggu'"))['total'] ?? 0;
+$totalDiproses  = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM pengajuan WHERE LOWER(status) = 'diproses' OR LOWER(status) = 'ditangani'"))['total'] ?? 0;
+$totalSelesai   = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM pengajuan WHERE LOWER(status) = 'selesai' OR LOWER(status) = 'disetujui'"))['total'] ?? 0;
+
+/*
+|--------------------------------------------------------------------------
+| LAPORAN PENGAJUAN TERBARU
+|--------------------------------------------------------------------------
+*/
+$queryPengajuanTerbaru = mysqli_query($koneksi,
+    "SELECT 
+        p.*, 
+        s.namasiswa, 
+        k.namakasus, 
+        kt.namakategori
+     FROM pengajuan p
+     LEFT JOIN siswa s ON p.idsiswa = s.idsiswa
+     LEFT JOIN kasus k ON p.idkasus = k.idkasus
+     LEFT JOIN kategori kt ON k.idkategori = kt.idkategori
+     ORDER BY p.idpengajuan DESC
+     LIMIT 5"
+);
+
+/*
+|--------------------------------------------------------------------------
+| KASUS PREDOMINAN / SERING DILAPORKAN
+|--------------------------------------------------------------------------
+*/
+$queryKasusPopuler = mysqli_query($koneksi,
+    "SELECT 
+        k.namakasus, 
+        k.tingkatbahaya, 
+        COUNT(p.idpengajuan) AS total_lapor
+     FROM kasus k
+     LEFT JOIN pengajuan p ON k.idkasus = p.idkasus
+     GROUP BY k.idkasus
+     ORDER BY total_lapor DESC
+     LIMIT 5"
+);
+
+// Nama Bulan Bahasa Indonesia
+$bulanSekarang = [
+    1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+    5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+    9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+];
+$namaBulan =$bulanSekarang[(int) date('n')];
 ?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin - Sistem Lapor Kasus</title>
-    <link rel="stylesheet" href="../../../assets/css/bootstrap.min.css">
-</head>
-<body class="bg-light">
 
-<?php include '../../component/user/navbar.php'; ?>
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-2 p-0 bg-dark min-vh-100">
-            <?php include '../../component/user/sidebaradmin.php'; ?>
-        </div>
-        <div class="col-md-10 p-4">
-            <h3 class="fw-bold mb-4">Dashboard Admin</h3>
-
-            <div class="row g-3 mb-4">
-                <div class="col-md-3">
-                    <div class="card border-0 shadow-sm bg-primary text-white p-3">
-                        <h6>Total Siswa</h6>
-                        <h2 class="fw-bold mb-0"><?= $totalSiswa; ?></h2>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card border-0 shadow-sm bg-warning text-white p-3">
-                        <h6>Jenis Kasus</h6>
-                        <h2 class="fw-bold mb-0"><?= $totalKasus; ?></h2>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card border-0 shadow-sm bg-info text-white p-3">
-                        <h6>Pengajuan Laporan</h6>
-                        <h2 class="fw-bold mb-0"><?= $totalPengajuan; ?></h2>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card border-0 shadow-sm bg-success text-white p-3">
-                        <h6>Selesai Ditangani</h6>
-                        <h2 class="fw-bold mb-0"><?= $totalPenanganan; ?></h2>
-                    </div>
-                </div>
+<!-- ==============================================================
+     CONTENT HEADER
+================================================================ -->
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2 align-items-center">
+            <div class="col-sm-8">
+                <h1 class="m-0 font-weight-bold">
+                    <i class="fas fa-tachometer-alt mr-2 text-danger"></i>
+                    Dashboard Admin
+                </h1>
+                <p class="text-muted mb-0 mt-1">
+                    Selamat datang kembali, 
+                    <strong><?= htmlspecialchars($_SESSION['namauser'] ?? 'Administrator'); ?></strong>. 
+                    Berikut ringkasan aktivitas pengaduan Lapor Kasus ekalisa.
+                </p>
             </div>
-
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white fw-bold py-3">Pengajuan Laporan Terbaru</div>
-                <div class="card-body p-0">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th>No</th>
-                                <th>Tanggal</th>
-                                <th>Nama Siswa</th>
-                                <th>Kelas</th>
-                                <th>Jenis Kasus</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php if (empty($pengajuanTerbaru)): ?>
-                                <tr><td colspan="6" class="text-center py-3 text-muted">Belum ada pengajuan masuk.</td></tr>
-                            <?php else: ?>
-                                <?php foreach ($pengajuanTerbaru as $i => $row): ?>
-                                    <tr>
-                                        <td><?= $i + 1; ?></td>
-                                        <td><?= date('d-m-Y', strtotime($row['tglpengajuan'])); ?></td>
-                                        <td><?= htmlspecialchars($row['namasiswa']); ?></td>
-                                        <td><?= htmlspecialchars($row['kelas']); ?></td>
-                                        <td><?= htmlspecialchars($row['namakasus']); ?></td>
-                                        <td>
-                                            <span class="badge bg-<?= $row['status'] === 'selesai' ? 'success' : ($row['status'] === 'diproses' ? 'warning' : 'secondary'); ?>">
-                                                <?= ucfirst($row['status']); ?>
-                                            </span>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="col-sm-4">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item">
+                        <a href="index.php?halaman=dashboardadmin"><i class="fas fa-home"></i></a>
+                    </li>
+                    <li class="breadcrumb-item active">Dashboard Admin</li>
+                </ol>
             </div>
         </div>
     </div>
 </div>
 
-</body>
-</html>
+<!-- ==============================================================
+     CONTENT MAIN
+================================================================ -->
+<div class="content">
+    <div class="container-fluid">
+
+        <!-- WELCOME BANNER -->
+        <div class="card bg-danger shadow-sm mb-4">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h3 class="font-weight-bold mb-2">
+                            <i class="fas fa-shield-alt mr-2"></i> Aplikasi Lapor Kasus Ekalisa
+                        </h3>
+                        <p class="mb-3">
+                            Pusat pengelolaan dan monitoring laporan pelanggaran siswa. Kelola data siswa, kasus, kategori, pengajuan pengaduan, penanganan, serta rincian sanksi dalam satu portal terpadu.
+                        </p>
+                        <a href="index.php?halaman=pengajuan" class="btn btn-light btn-sm mr-2 font

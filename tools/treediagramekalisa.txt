@@ -32,6 +32,7 @@ apklaporkasusekalisa/
 │   │   ├── dashboard/
 │   │   │   ├── dashboardadmin.php
 │   │   │   └── dashboardpetugas.php
+│   │   │   └── dashboardsiswa.php
 │   │   ├── user/              # khusus admin saja (fitur 8)
 │   │   │   ├── index.php
 │   │   │   ├── create.php

@@ -1,58 +1,79 @@
 <?php
-session_start();
-require_once '../../../proses/session.php';
-checkAdminOnly();
+/*
+|--------------------------------------------------------------------------
+| FORM EDIT USER SISTEM - APLIKASI LAPOR KASUS SEKALISA
+|--------------------------------------------------------------------------
+*/
 
-$iduser = $_GET['id'] ?? null;
-$stmt = $pdo->prepare("SELECT * FROM user WHERE iduser = :id");
-$stmt->execute(['id' => $iduser]);
-$user = $stmt->fetch();
+/** @var mysqli $koneksi */
+
+$iduser = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$qUser  = mysqli_query($koneksi, "SELECT * FROM user WHERE iduser = '$iduser' LIMIT 1");
+$user   = mysqli_fetch_assoc($qUser);
 
 if (!$user) {
-    header("Location: index.php");
+    echo "<script>alert('Data user tidak ditemukan!'); window.location='index.php?halaman=user';</script>";
     exit;
 }
 ?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <title>Edit User</title>
-    <link rel="stylesheet" href="../../../assets/css/bootstrap.min.css">
-</head>
-<body class="bg-light">
-<?php include '../../component/user/navbar.php'; ?>
 
-<div class="container my-4 col-md-6">
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-warning text-white fw-bold">Edit Data User</div>
-        <div class="card-body">
-            <form action="../../../proses/prosesuser.php?aksi=edit" method="POST">
-                <input type="hidden" name="iduser" value="<?= $user['iduser']; ?>">
-                <div class="mb-3">
-                    <label class="form-label">Username</label>
-                    <input type="text" name="username" class="form-control" value="<?= htmlspecialchars($user['username']); ?>" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Nama Lengkap</label>
-                    <input type="text" name="nama" class="form-control" value="<?= htmlspecialchars($user['nama']); ?>" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Password Baru <small class="text-muted">(Kosongkan jika tidak diubah)</small></label>
-                    <input type="password" name="password" class="form-control">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Role / Level</label>
-                    <select name="level" class="form-select" required>
-                        <option value="admin" <?= $user['level'] === 'admin' ? 'selected' : ''; ?>>Admin</option>
-                        <option value="petugas" <?= $user['level'] === 'petugas' ? 'selected' : ''; ?>>Petugas / Guru BK</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-warning text-white w-100">Update User</button>
-                <a href="index.php" class="btn btn-secondary w-100 mt-2">Batal</a>
-            </form>
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0 font-weight-bold"><i class="fas fa-user-edit text-warning mr-2"></i>Edit User Sistem</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="index.php?halaman=dashboardadmin">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="index.php?halaman=user">User Sistem</a></li>
+                    <li class="breadcrumb-item active">Edit User</li>
+                </ol>
+            </div>
         </div>
     </div>
 </div>
-</body>
-</html>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h3 class="card-title font-weight-bold text-dark m-0"><i class="fas fa-pen mr-1"></i> Edit User #<?= $user['iduser']; ?></h3>
+            </div>
+            <form action="proses/user/update.php" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="iduser" value="<?= $user['iduser']; ?>">
+                <input type="hidden" name="fotolama" value="<?= $user['foto']; ?>">
+
+                <div class="card-body">
+                    <div class="form-group">
+                        <label class="font-weight-bold">Nama Lengkap <span class="text-danger">*</span></label>
+                        <input type="text" name="namauser" class="form-control" value="<?= htmlspecialchars($user['namauser']); ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold">Username <span class="text-danger">*</span></label>
+                        <input type="text" name="username" class="form-control" value="<?= htmlspecialchars($user['username']); ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold">Password Baru <small class="text-muted">(Kosongkan jika tidak diganti)</small></label>
+                        <input type="password" name="password" class="form-control" placeholder="Password baru...">
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold">Role Hak Akses <span class="text-danger">*</span></label>
+                        <select name="role" class="form-control" required>
+                            <option value="petugas" <?= (strtolower($user['role']) == 'petugas') ? 'selected' : ''; ?>>Petugas BK</option>
+                            <option value="admin" <?= (strtolower($user['role']) == 'admin') ? 'selected' : ''; ?>>Administrator</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold">Ganti Foto Profil</label>
+                        <input type="file" name="foto" class="form-control-file" accept="image/*">
+                    </div>
+                </div>
+                <div class="card-footer bg-light text-right">
+                    <a href="index.php?halaman=user" class="btn btn-secondary mr-2"><i class="fas fa-arrow-left mr-1"></i> Batal</a>
+                    <button type="submit" name="submit" class="btn btn-warning text-white"><i class="fas fa-sync-alt mr-1"></i> Update User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>

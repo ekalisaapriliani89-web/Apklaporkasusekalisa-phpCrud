@@ -1,34 +1,51 @@
 <?php
-// proses/prosesdashboarduser.php
-require_once __DIR__ . '/session.php';
-checkAdminOnly();
+/*
+|--------------------------------------------------------------------------
+| PROSES DASHBOARD USER / SISWA - APLIKASI LAPOR KASUS SEKALISA
+|--------------------------------------------------------------------------
+| Path    : proses/prosesdashboarduser.php
+| Project : Aplikasi Lapor Kasus Sekalisa
+|--------------------------------------------------------------------------
+*/
 
-try {
-    // Total Akun User (Admin & Petugas)
-    $stmtUser = $pdo->query("SELECT COUNT(*) AS total FROM user");
-    $totalUser = $stmtUser->fetch()['total'];
+// Aktifkan session jika belum aktif
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-    // Total Siswa
-    $stmtSiswa = $pdo->query("SELECT COUNT(*) AS total FROM siswa");
-    $totalSiswa = $stmtSiswa->fetch()['total'];
+// Sertakan file koneksi database
+$pathKoneksi = __DIR__ . '/../koneksi.php';
+if (file_exists($pathKoneksi)) {
+    include $pathKoneksi;
+} else {
+    include 'koneksi.php';
+}
 
-    // Total Laporan Masuk (Pengajuan)
-    $stmtLaporan = $pdo->query("SELECT COUNT(*) AS total FROM pengajuan");
-    $totalLaporan = $stmtLaporan->fetch()['total'];
+/** @var mysqli $koneksi */
 
-    // Total Kasus Selesai Ditangani
-    $stmtPenanganan = $pdo->query("SELECT COUNT(*) AS total FROM penanganan");
-    $totalSelesai = $stmtPenanganan->fetch()['total'];
+// Validasi hak akses: Pastikan yang mengakses adalah siswa
+if (!isset($_SESSION['idsiswa']) && (!isset($_SESSION['role']) || $_SESSION['role'] !== 'siswa')) {
+    echo "<script>alert('Akses ditolak! Silakan login terlebih dahulu.'); window.location='../index.php?halaman=loginsiswa';</script>";
+    exit();
+}
 
-    // Laporan Masuk Terbaru (5 Terakhir)
-    $stmtTerbaru = $pdo->query("SELECT p.*, s.namasiswa, k.namakasus 
-                                FROM pengajuan p 
-                                JOIN siswa s ON p.idsiswa = s.idsiswa 
-                                JOIN kasus k ON p.idkasus = k.idkasus 
-                                ORDER BY p.idpengajuan DESC LIMIT 5");
-    $laporanTerbaru = $stmtTerbaru->fetchAll();
+$idsiswa = $_SESSION['idsiswa'] ?? 0;
+$aksi    = $_GET['aksi'] ?? '';
 
-} catch (PDOException $e) {
-    die("Gagal mengambil data dashboard: " . $e->getMessage());
+// Fungsi atau aksi tambahan khusus dashboard user jika diperlukan (misalnya refresh statistik, ambil data JSON, dsb)
+if ($aksi == 'get_statistik') {
+    header('Content-Type: application/json');
+
+    $totalLaporan = (int) (mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM pengajuan WHERE idsiswa = '$idsiswa'"))['total'] ?? 0);
+    $selesai      = (int) (mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM pengajuan WHERE idsiswa = '$idsiswa' AND (LOWER(status) = 'selesai' OR LOWER(status) = 'disetujui')"))['total'] ?? 0);
+    $diproses     = (int) (mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM pengajuan WHERE idsiswa = '$idsiswa' AND (LOWER(status) = 'diproses' OR LOWER(status) = 'ditangani' OR LOWER(status) = 'pending')"))['total'] ?? 0);
+
+    echo json_encode([
+        'status'   => 'success',
+        'total'    => $totalLaporan,
+        'selesai'  => $selesai,
+        'diproses' => $diproses
+    ]);
+    exit();
 }
 ?>

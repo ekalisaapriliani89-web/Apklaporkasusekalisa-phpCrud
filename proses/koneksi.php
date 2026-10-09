@@ -1,18 +1,22 @@
 <?php
-// proses/koneksi.php
 
-$host = 'localhost';
-$user = 'root';
-$pass = '';
-$db   = 'laporkasus';
+$host     = "localhost";
+$username = "root";
+$password = "";
+$database = "laporkasus";
 
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass, [
-        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        PDO::ATTR_EMULATE_PREPARES   => false,
-    ]);
-} catch (PDOException $e) {
-    die("Koneksi Database Gagal: " . $e->getMessage());
+$koneksi = mysqli_connect(
+    $host,
+    $username,
+    $password,
+    $database
+);
+
+if (!$koneksi) {
+
+    die(
+        "Koneksi Database Gagal : " .
+        mysqli_connect_error()
+    );
+
 }
-?>

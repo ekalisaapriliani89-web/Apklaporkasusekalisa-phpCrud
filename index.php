@@ -1,6 +1,5 @@
 <?php
 require_once 'proses/koneksi.php';
-require_once 'proses/helper.php';
 require_once 'proses/session.php';
 
 /*
@@ -12,11 +11,20 @@ $halaman = $_GET['halaman'] ?? 'home';
 
 /*
 |--------------------------------------------------------------------------
-| HALAMAN AUTH & PUBLIC
+| HALAMAN AUTH
 |--------------------------------------------------------------------------
 */
-$authPages = ['loginuser', 'loginsiswa', 'registersiswa'];
+$authPages = [
+    'loginuser',
+    'loginsiswa',
+    'registersiswa'
+];
 
+/*
+|--------------------------------------------------------------------------
+| HALAMAN LANDING (PUBLIC)
+|--------------------------------------------------------------------------
+*/
 $landingPages = [
     'home',
     'daftarkasus',
@@ -28,9 +36,22 @@ $landingPages = [
 ];
 
 include 'views/component/header.php';
+?>
 
-$isPublic = in_array($halaman, $landingPages) || in_array($halaman, $authPages) || $halaman === 'logout';
-$bodyClass = $isPublic ? 'hold-transition layout-top-nav' : 'hold-transition sidebar-mini layout-fixed';
+<!-- ==================================================================== -->
+<!-- BODY DINAMIS SESUAI ROLE: TAMU / PUBLIC, SISWA, PETUGAS, MAUPUN ADMIN -->
+<!-- ==================================================================== -->
+<?php
+$isPublic =
+    in_array($halaman, $landingPages) ||
+    in_array($halaman, $authPages) ||
+    $halaman === 'logout';
+
+if ($isPublic) {
+    $bodyClass = 'hold-transition layout-top-nav';
+} else {
+    $bodyClass = 'hold-transition sidebar-mini layout-fixed';
+}
 ?>
 
 <body class="<?= $bodyClass; ?>">
@@ -38,21 +59,38 @@ $bodyClass = $isPublic ? 'hold-transition layout-top-nav' : 'hold-transition sid
 <?php
 /*
 |--------------------------------------------------------------------------
-| LOGOUT & ZONA TAMU / PUBLIC
+| LOGOUT
 |--------------------------------------------------------------------------
 */
 if ($halaman === 'logout') {
     include 'views/auth/logout.php';
-} 
-elseif ($isPublic) {
+}
+
+/*
+|--------------------------------------------------------------------------
+| ZONA TAMU / PUBLIC + AUTH
+|--------------------------------------------------------------------------
+*/
+elseif (
+    in_array($halaman, $landingPages) ||
+    in_array($halaman, $authPages)
+) {
 ?>
 <div class="wrapper">
     <?php include 'views/component/tamu/navbar.php'; ?>
     <?php
     if (in_array($halaman, $authPages)) {
-        include "views/auth/{$halaman}.php";
+        if (file_exists("views/auth/{$halaman}.php")) {
+            include "views/auth/{$halaman}.php";
+        } else {
+            include "views/errors/404.php";
+        }
     } else {
-        include "views/landing/{$halaman}.php";
+        if (file_exists("views/landing/{$halaman}.php")) {
+            include "views/landing/{$halaman}.php";
+        } else {
+            include "views/errors/404.php";
+        }
     }
     ?>
     <?php include 'views/component/tamu/footer.php'; ?>
@@ -62,7 +100,7 @@ elseif ($isPublic) {
 
 /*
 |--------------------------------------------------------------------------
-| ZONA USER (ADMIN & PETUGAS)
+| ZONA USER (ADMIN / PETUGAS)
 |--------------------------------------------------------------------------
 */
 elseif (isset($_SESSION['iduser'])) {
@@ -70,114 +108,150 @@ elseif (isset($_SESSION['iduser'])) {
 <div class="wrapper">
     <?php include 'views/component/user/navbar.php'; ?>
     <?php
-    // Memanggil sidebar admin/petugas
-    $sidebar = ($_SESSION['role'] ?? '') === 'admin' ? 'sidebaradmin.php' : 'sidebarpetugas.php';
+    $sidebar =
+        (($_SESSION['role'] ?? '') === 'admin')
+        ? 'sidebaradmin.php'
+        : 'sidebarpetugas.php';
     include "views/component/user/{$sidebar}";
     ?>
 
-    <div class="content-wrapper">
+    <div class="content-wrapper p-3">
         <?php
         switch ($halaman) {
-            /* --- DASHBOARD --- */
+            /*
+            ==================================================
+            DASHBOARD USER
+            ==================================================
+            */
             case 'dashboardadmin':
                 cekAdmin();
                 include 'views/user/dashboard/dashboardadmin.php';
                 break;
-
             case 'dashboardpetugas':
-                cekPetugas();
+                cekPetugasOrAdmin();
                 include 'views/user/dashboard/dashboardpetugas.php';
                 break;
 
-            /* --- MANAJEMEN USER / PETUGAS (KHUSUS ADMIN) --- */
+            /*
+            ==================================================
+            MANAJEMEN USER (KHUSUS ADMIN - FITUR 8)
+            ==================================================
+            */
             case 'user':
             case 'createuser':
             case 'edituser':
             case 'showuser':
-                cekAdmin();
-                $file = str_replace(['createuser', 'edituser', 'showuser', 'user'], ['create', 'edit', 'show', 'index'], $halaman);
+                cekAdmin(); // Blokir Petugas yang mencoba akses via URL
+                $file = str_replace('user', '', $halaman);
+                $file = empty($file) ? 'index' : $file;
                 include "views/user/user/{$file}.php";
                 break;
 
-            /* --- DATA PELAPOR --- */
+            /*
+            ==================================================
+            DATA PELAPOR (FITUR 9 & 12)
+            ==================================================
+            */
             case 'pelapor':
             case 'createpelapor':
             case 'editpelapor':
             case 'showpelapor':
-                $file = str_replace(['createpelapor', 'editpelapor', 'showpelapor', 'pelapor'], ['create', 'edit', 'show', 'index'], $halaman);
+                $file = str_replace('pelapor', '', $halaman);
+                $file = empty($file) ? 'index' : $file;
                 include "views/user/pelapor/{$file}.php";
                 break;
 
-            /* --- MASTER SISWA --- */
+            /*
+            ==================================================
+            MASTER SISWA
+            ==================================================
+            */
             case 'siswa':
             case 'createsiswa':
             case 'editsiswa':
             case 'showsiswa':
-                $file = str_replace(['createsiswa', 'editsiswa', 'showsiswa', 'siswa'], ['create', 'edit', 'show', 'index'], $halaman);
+                $file = str_replace('siswa', '', $halaman);
+                $file = empty($file) ? 'index' : $file;
                 include "views/user/siswa/{$file}.php";
                 break;
 
-            /* --- KATEGORI KASUS --- */
+            /*
+            ==================================================
+            KATEGORI KASUS
+            ==================================================
+            */
             case 'kategori':
             case 'createkategori':
             case 'editkategori':
             case 'showkategori':
-                $file = str_replace(['createkategori', 'editkategori', 'showkategori', 'kategori'], ['create', 'edit', 'show', 'index'], $halaman);
+                $file = str_replace('kategori', '', $halaman);
+                $file = empty($file) ? 'index' : $file;
                 include "views/user/kategori/{$file}.php";
                 break;
 
-            /* --- MASTER KASUS --- */
+            /*
+            ==================================================
+            MASTER KASUS (FITUR 10)
+            ==================================================
+            */
             case 'kasus':
             case 'createkasus':
             case 'editkasus':
             case 'showkasus':
-                $file = str_replace(['createkasus', 'editkasus', 'showkasus', 'kasus'], ['create', 'edit', 'show', 'index'], $halaman);
+                $file = str_replace('kasus', '', $halaman);
+                $file = empty($file) ? 'index' : $file;
                 include "views/user/kasus/{$file}.php";
                 break;
 
-            /* --- MASTER SANKSI --- */
+            /*
+            ==================================================
+            MASTER SANKSI (FITUR 11)
+            ==================================================
+            */
             case 'sanksi':
             case 'createsanksi':
             case 'editsanksi':
             case 'showsanksi':
-                $file = str_replace(['createsanksi', 'editsanksi', 'showsanksi', 'sanksi'], ['create', 'edit', 'show', 'index'], $halaman);
+                $file = str_replace('sanksi', '', $halaman);
+                $file = empty($file) ? 'index' : $file;
                 include "views/user/sanksi/{$file}.php";
                 break;
 
-            /* --- PENANGANAN LAPORAN KASUS --- */
+            /*
+            ==================================================
+            PENANGANAN KASUS (FITUR 14)
+            ==================================================
+            */
             case 'penanganan':
             case 'createpenanganan':
             case 'editpenanganan':
             case 'showpenanganan':
-                $file = str_replace(['createpenanganan', 'editpenanganan', 'showpenanganan', 'penanganan'], ['create', 'edit', 'show', 'index'], $halaman);
+                $file = str_replace('penanganan', '', $halaman);
+                $file = empty($file) ? 'index' : $file;
                 include "views/user/penanganan/{$file}.php";
                 break;
 
-            /* --- PROFIL USER --- */
-            case 'profiluser':
-                include 'views/user/profil.php';
-                break;
-
-            /* --- LAPORAN & REKAP --- */
+            /*
+            ==================================================
+            REKAP LAPORAN (FITUR 6)
+            ==================================================
+            */
             case 'laporanharian':
-                include 'views/user/laporan/laporanharian.php';
-                break;
             case 'cetaklaporanharian':
-                include 'views/user/laporan/cetaklaporanharian.php';
-                break;
-
             case 'laporanbulanan':
-                include 'views/user/laporan/laporanbulanan.php';
-                break;
             case 'cetaklaporanbulanan':
-                include 'views/user/laporan/cetaklaporanbulanan.php';
+            case 'laporantahunan':
+            case 'cetaklaporantahunan':
+                include "views/user/laporan/{$halaman}.php";
                 break;
 
-            case 'laporantahunan':
-                include 'views/user/laporan/laporantahunan.php';
-                break;
-            case 'cetaklaporantahunan':
-                include 'views/user/laporan/cetaklaporantahunan.php';
+            /*
+            ==================================================
+            ERROR HANDLING
+            ==================================================
+            */
+            case '403':
+                include 'views/errors/403.php';
                 break;
 
             default:
@@ -193,7 +267,7 @@ elseif (isset($_SESSION['iduser'])) {
 
 /*
 |--------------------------------------------------------------------------
-| ZONA SISWA / PELAPOR
+| ZONA SISWA / PELAPOR (LOGIN SISWA)
 |--------------------------------------------------------------------------
 */
 elseif (isset($_SESSION['idsiswa'])) {
@@ -201,29 +275,30 @@ elseif (isset($_SESSION['idsiswa'])) {
 <div class="wrapper">
     <?php include 'views/component/siswa/navbar.php'; ?>
     <?php include 'views/component/siswa/sidebar.php'; ?>
-    
-    <div class="content-wrapper">
+
+    <div class="content-wrapper p-3">
         <?php
         switch ($halaman) {
-            case 'dashboardsiswa':
-                include 'views/siswa/dashboardsiswa.php';
-                break;
-                
+           case 'dashboardsiswa':
+    include 'views/user/dashboard/dashboardsiswa.php';
+    break;
+
             case 'profil':
                 include 'views/siswa/profil.php';
                 break;
-                
+
             case 'pengajuan':
                 include 'views/siswa/pengajuan/index.php';
                 break;
+
             case 'createpengajuan':
                 include 'views/siswa/pengajuan/create.php';
                 break;
-                
+
             case 'riwayatkasus':
                 include 'views/siswa/riwayatkasus.php';
                 break;
-                
+
             default:
                 include 'views/errors/404.php';
                 break;
@@ -237,7 +312,7 @@ elseif (isset($_SESSION['idsiswa'])) {
 
 /*
 |--------------------------------------------------------------------------
-| ERROR / UNUATHORIZED
+| ERROR 404 / UNAUTHORIZED
 |--------------------------------------------------------------------------
 */
 else {

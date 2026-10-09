@@ -1,57 +1,92 @@
 <?php
-session_start();
-require_once '../../../proses/session.php';
-checkAdminOnly();
-?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <title>Tambah Siswa</title>
-    <link rel="stylesheet" href="../../../assets/css/bootstrap.min.css">
-</head>
-<body class="bg-light">
-<?php include '../../component/user/navbar.php'; ?>
+/*
+|--------------------------------------------------------------------------
+| FORM TAMBAH SISWA - APLIKASI LAPOR KASUS SEKALISA
+|--------------------------------------------------------------------------
+*/
 
-<div class="container my-4 col-md-6">
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-primary text-white fw-bold">Tambah Siswa Baru</div>
-        <div class="card-body">
-            <form action="../../../proses/prosessiswa.php?aksi=tambah" method="POST">
-                <div class="mb-3">
-                    <label class="form-label">NISN</label>
-                    <input type="text" name="nisn" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Nama Lengkap Siswa</label>
-                    <input type="text" name="namasiswa" class="form-control" required>
-                </div>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Kelas</label>
-                        <input type="text" name="kelas" class="form-control" placeholder="Contoh: X IPA 1" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Jenis Kelamin</label>
-                        <select name="jeniskelamin" class="form-select" required>
-                            <option value="L">Laki-laki</option>
-                            <option value="P">Perempuan</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Password Akun Siswa</label>
-                    <input type="password" name="password" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Alamat</label>
-                    <textarea name="alamat" class="form-control" rows="3"></textarea>
-                </div>
-                <button type="submit" class="btn btn-success w-100">Simpan Data Siswa</button>
-                <a href="index.php" class="btn btn-secondary w-100 mt-2">Batal</a>
-            </form>
+/** @var mysqli $koneksi */
+?>
+
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0 font-weight-bold"><i class="fas fa-user-plus text-success mr-2"></i>Tambah Data Siswa</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="index.php?halaman=dashboardadmin">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="index.php?halaman=siswa">Siswa</a></li>
+                    <li class="breadcrumb-item active">Tambah Siswa</li>
+                </ol>
+            </div>
         </div>
     </div>
 </div>
-</body>
-</html>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h3 class="card-title font-weight-bold text-dark m-0"><i class="fas fa-edit mr-1"></i> Form Input Siswa Baru</h3>
+            </div>
+            <form action="proses/siswa/simpan.php" method="POST" enctype="multipart/form-data">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="font-weight-bold">NISN <span class="text-danger">*</span></label>
+                                <input type="text" name="nisn" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="font-weight-bold">Nama Lengkap <span class="text-danger">*</span></label>
+                                <input type="text" name="namasiswa" class="form-control" required>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Kelas <span class="text-danger">*</span></label>
+                                        <input type="text" name="kelas" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Jurusan</label>
+                                        <input type="text" name="jurusan" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="font-weight-bold">Username <span class="text-danger">*</span></label>
+                                <input type="text" name="username" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="font-weight-bold">Password <span class="text-danger">*</span></label>
+                                <input type="password" name="password" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="font-weight-bold">Nomor HP</label>
+                                <input type="text" name="nohp" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold">Alamat</label>
+                        <textarea name="alamat" rows="3" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold">Foto Profil</label>
+                        <input type="file" name="foto" class="form-control-file" accept="image/*">
+                    </div>
+                </div>
+                <div class="card-footer bg-light text-right">
+                    <a href="index.php?halaman=siswa" class="btn btn-secondary mr-2"><i class="fas fa-arrow-left mr-1"></i> Batal</a>
+                    <button type="submit" name="submit" class="btn btn-success"><i class="fas fa-save mr-1"></i> Simpan Data</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>

@@ -1,60 +1,73 @@
 <?php
-session_start();
-require_once '../../../proses/session.php';
-checkAdminOnly();
+/*
+|--------------------------------------------------------------------------
+| DETAIL SISWA - APLIKASI LAPOR KASUS SEKALISA
+|--------------------------------------------------------------------------
+*/
 
-$userList = $pdo->query("SELECT * FROM user ORDER BY iduser DESC")->fetchAll();
+/** @var mysqli $koneksi */
+
+$idsiswa = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$qSiswa  = mysqli_query($koneksi, "SELECT * FROM siswa WHERE idsiswa = '$idsiswa' LIMIT 1");
+$siswa   = mysqli_fetch_assoc($qSiswa);
+
+if (!$siswa) {
+    echo "<script>alert('Data siswa tidak ditemukan!'); window.location='index.php?halaman=siswa';</script>";
+    exit;
+}
+
+$qPengajuan = mysqli_query($koneksi, "SELECT p.*, k.namakasus FROM pengajuan p LEFT JOIN kasus k ON p.idkasus = k.idkasus WHERE p.idsiswa = '$idsiswa' ORDER BY p.idpengajuan DESC");
 ?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <title>Manajemen User - Admin</title>
-    <link rel="stylesheet" href="../../../assets/css/bootstrap.min.css">
-</head>
-<body class="bg-light">
-<?php include '../../component/user/navbar.php'; ?>
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-2 p-0 border-end min-vh-100 bg-dark">
-            <?php include '../../component/user/sidebaradmin.php'; ?>
-        </div>
-        <div class="col-md-10 p-4">
-            <div class="d-flex justify-content-between mb-3">
-                <h4 class="fw-bold">Data Management User</h4>
-                <a href="create.php" class="btn btn-primary">+ Tambah User</a>
+
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0 font-weight-bold"><i class="fas fa-id-card text-info mr-2"></i>Detail Siswa</h1>
             </div>
-            <div class="card border-0 shadow-sm">
-                <div class="card-body p-0">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th>No</th>
-                                <th>Nama User</th>
-                                <th>Username</th>
-                                <th>Role</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($userList as $i => $u): ?>
-                                <tr>
-                                    <td><?= $i + 1; ?></td>
-                                    <td><?= htmlspecialchars($u['namauser']); ?></td>
-                                    <td><?= htmlspecialchars($u['username']); ?></td>
-                                    <td><span class="badge bg-<?= $u['role'] == 'admin' ? 'danger' : 'info'; ?>"><?= strtoupper($u['role']); ?></span></td>
-                                    <td>
-                                        <a href="edit.php?id=<?= $u['iduser']; ?>" class="btn btn-sm btn-warning">Edit</a>
-                                        <a href="../../../proses/prosesuser.php?aksi=hapus&id=<?= $u['iduser']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Yakin hapus user ini?')">Hapus</a>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="index.php?halaman=dashboardadmin">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="index.php?halaman=siswa">Siswa</a></li>
+                    <li class="breadcrumb-item active">Detail Siswa</li>
+                </ol>
             </div>
         </div>
     </div>
 </div>
-</body>
-</html>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm text-center">
+                    <div class="card-body">
+                        <?php $foto = !empty($siswa['foto']) ? $siswa['foto'] : 'default.png'; ?>
+                        <img src="assets/images/siswa/<?= $foto; ?>" class="img-circle elevation-2 mb-3" style="width: 120px; height: 120px; object-fit: cover;" onerror="this.src='assets/images/siswa/default.png';">
+                        <h4 class="font-weight-bold text-dark mb-1"><?= htmlspecialchars($siswa['namasiswa']); ?></h4>
+                        <p class="text-muted mb-2">NISN: <strong><?= htmlspecialchars($siswa['nisn'] ?? '-'); ?></strong></p>
+                        <span class="badge badge-primary px-3 py-1">Kelas <?= htmlspecialchars(($siswa['kelas'] ?? '') . ' ' . ($siswa['jurusan'] ?? '')); ?></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white py-3">
+                        <h3 class="card-title font-weight-bold text-dark m-0"><i class="fas fa-info-circle mr-1"></i> Informasi Kontak</h3>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <tr><th width="30%">Username</th><td>: <?= htmlspecialchars($siswa['username'] ?? '-'); ?></td></tr>
+                            <tr><th>No. HP</th><td>: <?= htmlspecialchars($siswa['nohp'] ?? '-'); ?></td></tr>
+                            <tr><th>Alamat</th><td>: <?= htmlspecialchars($siswa['alamat'] ?? '-'); ?></td></tr>
+                        </table>
+                    </div>
+                    <div class="card-footer bg-light text-right">
+                        <a href="index.php?halaman=siswa" class="btn btn-secondary mr-2"><i class="fas fa-arrow-left mr-1"></i> Kembali</a>
+                        <a href="index.php?halaman=editsiswa&id=<?= $siswa['idsiswa']; ?>" class="btn btn-warning text-white"><i class="fas fa-edit mr-1"></i> Edit</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

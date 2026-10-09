@@ -1,30 +1,29 @@
 <?php
-// proses/session.php
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-require_once __DIR__ . '/koneksi.php';
-
-function checkLogin() {
-    if (!isset($_SESSION['is_logged_in']) || $_SESSION['is_logged_in'] !== true) {
-        header('Location: /apklaporkasusekalisa/views/auth/loginuser.php');
-        exit;
+// 1. Definisi fungsi cekAdmin
+function cekAdmin() {
+    if (!isset($_SESSION['iduser']) || ($_SESSION['role'] ?? '') !== 'admin') {
+        header("Location: index.php?halaman=403");
+        exit();
     }
 }
 
-function checkAdminOnly() {
-    checkLogin();
-    if ($_SESSION['role'] !== 'admin') {
-        header('Location: /apklaporkasusekalisa/views/errors/403.php');
-        exit;
+// 2. Definisi fungsi cekPetugasOrAdmin
+function cekPetugasOrAdmin() {
+    if (!isset($_SESSION['iduser'])) {
+        header("Location: index.php?halaman=loginuser");
+        exit();
     }
 }
 
-function checkSiswaOnly() {
-    if (!isset($_SESSION['is_siswa_logged_in']) || $_SESSION['is_siswa_logged_in'] !== true) {
-        header('Location: /apklaporkasusekalisa/views/auth/loginsiswa.php');
-        exit;
+// 3. Definisi fungsi cekSiswa
+function cekSiswa() {
+    if (!isset($_SESSION['idsiswa'])) {
+        header("Location: index.php?halaman=loginsiswa");
+        exit();
     }
 }
 ?>
